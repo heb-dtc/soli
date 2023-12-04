@@ -1,39 +1,57 @@
 package net.heb.soli
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import net.heb.soli.player.MiniPlayer
 import net.heb.soli.player.Player
 import net.heb.soli.stream.StreamRepository
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 fun App() {
 
     val player = koinInject<Player>()
     val repo = koinInject<StreamRepository>()
 
-    val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+    val scaffoldState = rememberBottomSheetScaffoldState()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    val miniPlayerHeight = 56.dp
 
     MaterialTheme {
         BottomSheetScaffold(
             sheetContent = {
-                MiniPlayer(player)
-            }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(miniPlayerHeight)
+                ) {
+                    MiniPlayer(player)
+                }
+            },
+            scaffoldState = scaffoldState,
+            sheetPeekHeight = miniPlayerHeight,
+            sheetBackgroundColor = Color(0xFFa8dadc),
         )
         {
             HomeScreen(repo) {

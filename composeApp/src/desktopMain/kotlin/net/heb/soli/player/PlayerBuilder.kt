@@ -8,11 +8,11 @@ import java.net.URI
 
 actual class PlayerBuilder {
     actual fun build(): Player {
-        return GstPlayer()
+        return Player(PlatformPlayer())
     }
 }
 
-class GstPlayer : Player() {
+actual class PlatformPlayer {
 
     private val audioPlayBin: PlayBin
 
@@ -23,23 +23,23 @@ class GstPlayer : Player() {
         audioPlayBin.setAudioSink(ElementFactory.make("autoaudiosink", "audiosink"))
     }
 
-    override fun play(item: StreamItem) {
+    actual fun play(item: StreamItem) {
         stop()
         audioPlayBin.setURI(URI.create(item.uri))
         audioPlayBin.play()
     }
 
-    override fun pause() {
+    actual fun pause() {
         audioPlayBin.pause()
     }
 
-    override fun stop() {
+    actual fun stop() {
         audioPlayBin.stop()
     }
 
-    override fun resume() {
+    actual fun resume() {
         audioPlayBin.play()
     }
 
-    override fun isPlaying() = audioPlayBin.isPlaying
+    actual fun isPlaying() = audioPlayBin.isPlaying
 }

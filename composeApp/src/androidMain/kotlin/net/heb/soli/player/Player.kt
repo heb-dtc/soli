@@ -8,11 +8,11 @@ import net.heb.soli.stream.StreamItem
 
 actual class PlayerBuilder(private val context: Context) {
     actual fun build(): Player {
-        return AndroidPlayer(context = context)
+        return Player(PlatformPlayer(context = context))
     }
 }
 
-class AndroidPlayer(context: Context) : Player() {
+actual class PlatformPlayer(context: Context) {
     private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context)
         .setAudioAttributes(AudioAttributes.DEFAULT, true)
         .setHandleAudioBecomingNoisy(true)
@@ -21,7 +21,7 @@ class AndroidPlayer(context: Context) : Player() {
             playWhenReady = true
         }
 
-    override fun play(item: StreamItem) {
+    actual fun play(item: StreamItem) {
         println("Playing")
         println("Starting radio: ${item.name}")
         val source = MediaItem.Builder()
@@ -34,19 +34,19 @@ class AndroidPlayer(context: Context) : Player() {
         exoPlayer.play()
     }
 
-    override fun resume() {
+    actual fun resume() {
         exoPlayer.play()
     }
 
-    override fun pause() {
+    actual fun pause() {
         println("Pausing")
         exoPlayer.pause()
     }
 
-    override fun stop() {
+    actual fun stop() {
         println("Stopping")
         exoPlayer.release()
     }
 
-    override fun isPlaying() = exoPlayer.isPlaying
+    actual fun isPlaying() = exoPlayer.isPlaying
 }

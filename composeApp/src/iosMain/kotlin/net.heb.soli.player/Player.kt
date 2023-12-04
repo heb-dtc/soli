@@ -4,28 +4,29 @@ import net.heb.soli.stream.StreamItem
 
 actual class PlayerBuilder {
     actual fun build(): Player {
-        return IosPlayer()
+        return Player(PlatformPlayer())
     }
 }
 
-class IosPlayer : Player {
-    override fun startStream(item: StreamItem) {
-        println("startRadio: $item")
-    }
+actual class PlatformPlayer {
 
-    override fun play() {
+    actual fun play(item: StreamItem) {
         println("play")
     }
 
-    override fun pause() {
+    actual fun pause() {
         println("pause")
     }
 
-    override fun stop() {
+    actual fun stop() {
         println("stop")
     }
 
-    override fun isPlaying(): Boolean {
+    actual fun resume() {
+        println("resume")
+    }
+
+    actual fun isPlaying(): Boolean {
         return false
     }
 }
