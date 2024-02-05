@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.tasks.factory.registerTask
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
@@ -8,13 +9,7 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
+    androidTarget()
     
     jvm("desktop")
     
@@ -37,18 +32,17 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 
-            implementation("androidx.media3:media3-exoplayer:1.2.0")
-            implementation("androidx.media3:media3-exoplayer-hls:1.2.0")
-            implementation("androidx.media3:media3-session:1.2.0")
-            implementation("androidx.media3:media3-common:1.2.0")
+            implementation(libs.media3.exoplayer)
+            implementation(libs.media3.exoplayer.hls)
+            implementation(libs.media3.session)
+            implementation(libs.media3.common)
 
             implementation(libs.koin.android)
-
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("net.java.dev.jna:jna:5.4.0")
-            implementation("org.freedesktop.gstreamer:gst1-java-core:1.1.0")
+            implementation(libs.jna)
+            implementation(libs.gstreamer.gst1)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -99,22 +93,36 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+    }
+    kotlin {
+        jvmToolchain(17)
     }
 }
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "net.heb.soli.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "net.heb.soli"
+            packageName = "Soli"
             packageVersion = "1.0.0"
         }
     }
 }
+
+//tasks.named("packageReleaseUberJarForCurrentOS") {
+//    doLast {
+//        val uberJar = file("${layout.buildDirectory}/distributions/${project.name}-${project.version}-uber.jar")
+//        val homeBinDir = file(System.getProperty("user.home") + "/bin")
+//        copy {
+//            from(uberJar)
+//            into(homeBinDir)
+//        }
+//    }
+//}

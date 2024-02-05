@@ -17,6 +17,7 @@ kotlin = "1.9.21"
 junit = "4.13.2"
 koin = "3.5.0"
 koinComposeJvm = "1.1.0"
+media3 = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -38,6 +39,15 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose-jvm = { module = "io.insert-koin:koin-compose", version.ref = "koinComposeJvm" }
+
+media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-session = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-common = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+
+jna = { group = "net.java.dev.jna", name = "jna", version = "5.4.0" }
+gstreamer-gst1 = { group = "org.freedesktop.gstreamer", name = "gst1-java-core", version = "1.1.0" }
+
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

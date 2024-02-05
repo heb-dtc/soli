@@ -1,3 +1,5 @@
+package net.heb.soli
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Window
@@ -8,7 +10,9 @@ import net.heb.soli.di.initKoin
 val koinApp = initKoin().koin
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(
+        title = "SOLI", onCloseRequest = ::exitApplication
+    ) {
         App()
     }
 }
