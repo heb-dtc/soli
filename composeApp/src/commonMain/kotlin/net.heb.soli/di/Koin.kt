@@ -14,13 +14,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}): KoinApplication {
     }
 }
 
-fun initKoinIos() {
-    println("initKoinIos")
-    startKoin {
-        modules(commonModule(), platformModule())
-    }
-}
-
 expect fun platformModule(): Module
 
 fun commonModule() = module {

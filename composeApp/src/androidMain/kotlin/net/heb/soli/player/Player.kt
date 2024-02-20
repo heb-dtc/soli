@@ -1,9 +1,12 @@
 package net.heb.soli.player
 
+import android.content.ComponentName
 import android.content.Context
-import androidx.media3.common.AudioAttributes
 import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.MediaMetadata
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.MoreExecutors
 import net.heb.soli.stream.StreamItem
 
 actual class PlayerBuilder(private val context: Context) {
@@ -13,40 +16,51 @@ actual class PlayerBuilder(private val context: Context) {
 }
 
 actual class PlatformPlayer(context: Context) {
-    private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context)
-        .setAudioAttributes(AudioAttributes.DEFAULT, true)
-        .setHandleAudioBecomingNoisy(true)
-        //.setWakeMode(C.WAKE_MODE_LOCAL)
-        .build().apply {
-            playWhenReady = true
-        }
+
+    private val sessionToken =
+        SessionToken(context, ComponentName(context, PlayerService::class.java))
+    private val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+
+    private var mediaController: MediaController? = null
+
+    init {
+        controllerFuture.addListener({
+            mediaController = controllerFuture.get()
+        }, MoreExecutors.directExecutor())
+    }
 
     actual fun play(item: StreamItem) {
         println("Playing")
         println("Starting radio: ${item.name}")
-        val source = MediaItem.Builder()
-            .setUri(item.uri)
-            //.setMediaMetadata(mediaMetadata)
+        val mediaMetadata = MediaMetadata.Builder()
+            .setTitle("SOLI")
+            .setArtist(item.name)
+            .setArtworkUri()
             .build()
 
-        exoPlayer.setMediaItem(source)
-        exoPlayer.prepare()
-        exoPlayer.play()
+        val source = MediaItem.Builder()
+            .setUri(item.uri)
+            .setMediaMetadata(mediaMetadata)
+            .build()
+
+        mediaController?.setMediaItem(source, /* resetPosition= */ true)
+        mediaController?.prepare()
+        mediaController?.play()
     }
 
     actual fun resume() {
-        exoPlayer.play()
+        mediaController?.play()
     }
 
     actual fun pause() {
         println("Pausing")
-        exoPlayer.pause()
+        mediaController?.pause()
     }
 
     actual fun stop() {
         println("Stopping")
-        exoPlayer.release()
+        mediaController?.release()
     }
 
-    actual fun isPlaying() = exoPlayer.isPlaying
+    actual fun isPlaying(): Boolean = mediaController?.isPlaying == true
 }
