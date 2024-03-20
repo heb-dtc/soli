@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package net.heb.soli.player
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import net.heb.soli.stream.StreamItem
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
@@ -46,9 +49,8 @@ actual class PlatformPlayer {
     }
     actual fun play(item: StreamItem) {
         println("play")
-        val url = NSURL.fileURLWithPath(item.uri)
-        val asset = AVURLAsset(url,  mapOf("AVURLAssetOutOfBandMIMETypeKey" to "audio/mpeg"))
-        val playerItem = AVPlayerItem(asset)
+        val url = NSURL.URLWithString(item.uri)!!
+        val playerItem = AVPlayerItem(url)
         player.replaceCurrentItemWithPlayerItem(playerItem)
         player.play()
     }

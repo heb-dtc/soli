@@ -1,4 +1,4 @@
-rootProject.name = "Soli"
+rootProject.name = "soli"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
