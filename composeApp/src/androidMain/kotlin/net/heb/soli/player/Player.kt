@@ -35,7 +35,7 @@ actual class PlatformPlayer(context: Context) {
         val mediaMetadata = MediaMetadata.Builder()
             .setTitle("SOLI")
             .setArtist(item.name)
-            .setArtworkUri()
+            //.setArtworkUri()
             .build()
 
         val source = MediaItem.Builder()
