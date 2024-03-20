@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,13 +21,21 @@ import net.heb.soli.player.MiniPlayer
 import net.heb.soli.player.Player
 import net.heb.soli.stream.StreamRepository
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterialApi::class
-)
 @Composable
 fun App() {
+    KoinContext {
+        MaterialTheme {
+            Soli()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun Soli() {
 
     val player = koinInject<Player>()
     val repo = koinInject<StreamRepository>()
