@@ -14,31 +14,31 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.heb.soli.stream.StreamItem
-import net.heb.soli.stream.StreamRepository
 
 @Composable
-fun HomeScreen(streamRepository: StreamRepository, onStartStream: (StreamItem) -> Unit) {
-    val items = streamRepository.getStreams()
+fun HomeScreen(viewModel: HomeScreenViewModel, onStartStream: (StreamItem) -> Unit) {
+    val state = viewModel.state.collectAsState()
 
     HomeScreen(
-        streamItems = items,
+        state = state.value,
         onStartStream = onStartStream
     )
 }
 
 @Composable
 fun HomeScreen(
-    streamItems: List<StreamItem>,
+    state: HomeScreenState,
     onStartStream: (StreamItem) -> Unit,
 ) {
     Column {
-        StreamItemList(medias = streamItems, onClick = onStartStream)
+        StreamItemList(medias = state.streamItems, onClick = onStartStream)
     }
 }
 
