@@ -16,5 +16,5 @@ COPY --from=builder /app/server .
 
 EXPOSE 8080
 
-CMD ["./server", "-port", "8080", "-content", "/data", "-token", "${token}"] 
+CMD ["sh", "-c", "./server -port 8080 -content /data -token ${token}"] 
 
