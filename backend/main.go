@@ -38,6 +38,7 @@ func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		token := r.Header.Get("Authorization")
 		if token != secret {
             log.Println("Unauthorized token: ", token)
+            log.Println("secret is: ", secret)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -68,13 +69,13 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.StringVar(&contentDir, "content", "content", "Content directory")
 	flag.StringVar(&port, "port", "3254", "Port to listen on")
-    flag.StringVar(&secret, "token", "123LKJH678", "Token")
+    flag.StringVar(&secret, "token", "123LKJH678", "Bearer token")
 	flag.Parse()
 
     secret = "Bearer " + secret
 
 	http.HandleFunc("/library", authMiddleware(libraryHandler))
 	http.HandleFunc("/content/", authMiddleware(contentHandler))
-	log.Println("Server started on port ", port)
+	log.Println("Server started on port", port)
 	http.ListenAndServe(":"+port, nil)
 }
