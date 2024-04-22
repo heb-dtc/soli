@@ -1,10 +1,10 @@
-import com.android.build.gradle.internal.tasks.factory.registerTask
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.jetbrainsCompose)
 }
 
@@ -32,6 +32,8 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 
+            implementation(libs.ktor.client.okhttp)
+
             implementation(libs.media3.exoplayer)
             implementation(libs.media3.exoplayer.hls)
             implementation(libs.media3.session)
@@ -39,8 +41,13 @@ kotlin {
 
             implementation(libs.koin.android)
         }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
         desktopMain.dependencies {
+            implementation(libs.ktor.client.cio)
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.jna)
             implementation(libs.gstreamer.gst1)
         }
@@ -50,8 +57,15 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
             implementation(compose.material)
-            @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+
+            implementation(libs.kotlinx.coroutines)
+            implementation(libs.kotlinx.serialization)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose.jvm)
@@ -115,14 +129,3 @@ compose.desktop {
         }
     }
 }
-
-//tasks.named("packageReleaseUberJarForCurrentOS") {
-//    doLast {
-//        val uberJar = file("${layout.buildDirectory}/distributions/${project.name}-${project.version}-uber.jar")
-//        val homeBinDir = file(System.getProperty("user.home") + "/bin")
-//        copy {
-//            from(uberJar)
-//            into(homeBinDir)
-//        }
-//    }
-//}
