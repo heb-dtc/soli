@@ -51,7 +51,7 @@ fun Soli() {
             },
             scaffoldState = scaffoldState,
             sheetPeekHeight = miniPlayerHeight,
-            sheetBackgroundColor = Color(0xFFa8dadc),
+            sheetBackgroundColor = Color(0xFFD2D4FF),
         )
         {
             HomeScreen(homeScreenViewModel) {

@@ -1,7 +1,9 @@
 package net.heb.soli
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamRepository
 
@@ -15,6 +17,8 @@ class HomeScreenViewModel(private val streamRepository: StreamRepository) : View
     val state = _state
 
     init {
-        _state.value = HomeScreenState(streamItems = streamRepository.getStreams())
+        GlobalScope.launch {
+            _state.value = HomeScreenState(streamItems = streamRepository.getStreams())
+        }
     }
 }
