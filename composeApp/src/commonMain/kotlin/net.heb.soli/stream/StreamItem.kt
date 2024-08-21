@@ -2,6 +2,10 @@ package net.heb.soli.stream
 
 import kotlinx.serialization.Serializable
 
+enum class StreamType {
+    Radio, Ambient, Song, Podcast, Spotify
+}
+
 @Serializable
 data class Stream(
     val id: Long,
@@ -9,4 +13,4 @@ data class Stream(
     val url: String
 )
 
-data class StreamItem(val id: Long, val name: String, val uri: String)
+data class StreamItem(val id: Long, val name: String, val uri: String, val type: StreamType)

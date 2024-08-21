@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.heb.soli.stream.StreamItem
+import net.heb.soli.stream.StreamType
 
 @Composable
 fun HomeScreen(
@@ -58,18 +59,17 @@ fun HomeScreen(
         Text("Radios", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
         ItemGrid(
             items = state.streamItems.filter {
-                !it.name.contains("dikro", ignoreCase = true) && !it.name.contains(
-                    "compile2noel",
-                    ignoreCase = true
-                )
+                it.type == StreamType.Radio
             },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 
-        Text("Ambiant", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
+        Text("Ambient", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
         ItemGrid(
-            items = state.streamItems.takeLast(2),
+            items = state.streamItems.filter {
+                it.type == StreamType.Ambient
+            },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -81,7 +81,9 @@ fun HomeScreen(
             fontWeight = FontWeight.Bold
         )
         ItemGrid(
-            items = listOf(StreamItem(id = 1092, name = "No items", uri = "")),
+            items = state.streamItems.filter {
+                it.type == StreamType.Podcast
+            },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -93,18 +95,17 @@ fun HomeScreen(
             fontWeight = FontWeight.Bold
         )
         ItemGrid(
-            items = listOf(StreamItem(id = 1092, name = "No items", uri = "")),
+            items = state.streamItems.filter {
+                it.type == StreamType.Spotify
+            },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 
         Text("Songs", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
         ItemGrid(
-            items = state.streamItems.takeWhile {
-                it.name.contains("dikro", ignoreCase = true) || it.name.contains(
-                    "compile2noel",
-                    ignoreCase = true
-                )
+            items = state.streamItems.filter {
+                it.type == StreamType.Song
             },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
@@ -170,8 +171,8 @@ fun RadioItem(
             containerColor = color,
         ),
         modifier = modifier
-            .height(140.dp)
-            .width(140.dp)
+            .height(200.dp)
+            .width(200.dp)
             .clickable {
                 onClick(streamItem)
             }
