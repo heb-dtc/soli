@@ -3,6 +3,7 @@ package net.heb.soli
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
@@ -53,8 +54,8 @@ fun Soli() {
             sheetPeekHeight = miniPlayerHeight,
             sheetBackgroundColor = Color(0xFFD2D4FF),
         )
-        {
-            HomeScreen(homeScreenViewModel) {
+        { innerPadding ->
+            HomeScreen(homeScreenViewModel, Modifier.padding(innerPadding)) {
                 player.startStream(it)
             }
         }

@@ -1,27 +1,21 @@
 package net.heb.soli
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -32,15 +26,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import net.heb.soli.stream.Stream
 import net.heb.soli.stream.StreamItem
 
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel, onStartStream: (StreamItem) -> Unit) {
+fun HomeScreen(
+    viewModel: HomeScreenViewModel,
+    modifier: Modifier = Modifier,
+    onStartStream: (StreamItem) -> Unit
+) {
     val state = viewModel.state.collectAsState()
 
     HomeScreen(
         state = state.value,
+        modifier = modifier,
         onStartStream = onStartStream
     )
 }
@@ -48,16 +46,17 @@ fun HomeScreen(viewModel: HomeScreenViewModel, onStartStream: (StreamItem) -> Un
 @Composable
 fun HomeScreen(
     state: HomeScreenState,
+    modifier: Modifier = Modifier,
     onStartStream: (StreamItem) -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         Text("Radios", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
-        ItemRow(
+        ItemGrid(
             items = state.streamItems.filter {
                 !it.name.contains("dikro", ignoreCase = true) && !it.name.contains(
                     "compile2noel",
@@ -69,7 +68,7 @@ fun HomeScreen(
         )
 
         Text("Ambiant", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
-        ItemRow(
+        ItemGrid(
             items = state.streamItems.takeLast(2),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
@@ -81,7 +80,7 @@ fun HomeScreen(
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold
         )
-        ItemRow(
+        ItemGrid(
             items = listOf(StreamItem(id = 1092, name = "No items", uri = "")),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
@@ -93,14 +92,14 @@ fun HomeScreen(
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold
         )
-        ItemRow(
+        ItemGrid(
             items = listOf(StreamItem(id = 1092, name = "No items", uri = "")),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 
         Text("Songs", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
-        ItemRow(
+        ItemGrid(
             items = state.streamItems.takeWhile {
                 it.name.contains("dikro", ignoreCase = true) || it.name.contains(
                     "compile2noel",
@@ -114,7 +113,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun ItemRow(items: List<StreamItem>, onClick: (StreamItem) -> Unit, modifier: Modifier = Modifier) {
+fun ItemGrid(items: List<StreamItem>, onClick: (StreamItem) -> Unit, modifier: Modifier = Modifier) {
     val colors = listOf(0xFFe63946, 0xFFf1faee, 0xFFa8dadc, 0xFF457b9d, 0xFF1d3557)
 
     Row(
