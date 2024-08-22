@@ -5,7 +5,11 @@ import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import kotlinx.datetime.Clock
+import net.heb.soli.stream.FeedWrapper
 import net.heb.soli.stream.Stream
+import net.heb.soli.stream.StreamItem
+import net.heb.soli.stream.StreamType
 
 class SoliApi(
     private val httpClient: HttpClient
@@ -23,6 +27,32 @@ class SoliApi(
         print("response: $response")
 
         return response.body()
+    }
+
+    suspend fun getPodcast(feedId: String): StreamItem {
+        val apiKey = "4SJ3XR6SF5N2SFEZ5ZZY"
+        val apiSecret = "RxfyWNhPbx#sZRbTyJVz8GHfAwDDaCDjMdjWcSQ9"
+        val now = Clock.System.now().toEpochMilliseconds() / 1000
+
+        val sha1 = Crypto().sha1(apiKey + apiSecret + now)
+
+        val response =
+            httpClient.get("https://api.podcastindex.org/api/1.0/podcasts/byfeedid?id=$feedId&pretty") {
+                header("User-Agent", "SoliApp/0.1")
+                header("X-Auth-Key", apiKey)
+                header("X-Auth-Date", now)
+                header("Authorization", sha1)
+            }
+
+        val wrapper = response.body<FeedWrapper>()
+        print("response: ${wrapper.feed.title}")
+
+        return StreamItem(
+            id = feedId.toLong(),
+            name = wrapper.feed.title,
+            uri = wrapper.feed.image,
+            type = StreamType.Podcast
+        )
     }
 
     private fun HttpRequestBuilder.createHeaders() {

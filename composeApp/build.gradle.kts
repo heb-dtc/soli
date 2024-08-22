@@ -71,6 +71,8 @@ kotlin {
             implementation(libs.koin.compose.jvm)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+            implementation(libs.kotlinx.datetime)
         }
     }
 }
