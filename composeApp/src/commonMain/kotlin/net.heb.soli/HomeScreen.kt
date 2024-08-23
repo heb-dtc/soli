@@ -82,7 +82,7 @@ fun HomeScreen(
         )
         ItemGrid(
             items = state.streamItems.filter {
-                it.type == StreamType.Podcast
+                it.type == StreamType.PodcastFeed
             },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
@@ -96,7 +96,7 @@ fun HomeScreen(
         )
         ItemGrid(
             items = state.streamItems.filter {
-                it.type == StreamType.Spotify
+                it.type == StreamType.SpotifyPlaylist
             },
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)

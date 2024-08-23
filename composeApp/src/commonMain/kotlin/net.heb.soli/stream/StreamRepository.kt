@@ -26,8 +26,8 @@ class StreamRepository(private val api: SoliApi) {
     }
 
     suspend fun getPodcastStreams(): List<StreamItem> {
-        return listOf(api.getPodcast("555224"), api.getPodcast("217966"),
-            api.getPodcast("555224"), api.getPodcast("509931"))
+        return listOf(api.getPodcastFeed("555224"), api.getPodcastFeed("217966"),
+            api.getPodcastFeed("555224"), api.getPodcastFeed("509931"))
     }
 
     fun getSpotifyStreams() = emptyList<StreamItem>()

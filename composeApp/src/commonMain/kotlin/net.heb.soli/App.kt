@@ -12,11 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import net.heb.soli.player.MiniPlayer
 import net.heb.soli.player.Player
-import net.heb.soli.stream.StreamRepository
+import net.heb.soli.podcast.PodcastEpisodesScreen
 import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
+
+sealed class Screen(val route: String) {
+    data object Home : Screen(route = "home")
+    data object PodcastEpisodes : Screen(route = "podcast-episodes")
+}
 
 @Composable
 fun App() {
@@ -32,32 +40,64 @@ fun App() {
 fun Soli() {
 
     val player = koinInject<Player>()
-    val repo = koinInject<StreamRepository>()
-    val homeScreenViewModel = HomeScreenViewModel(repo)
+    val homeScreenViewModel: HomeScreenViewModel = koinInject()
 
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     val miniPlayerHeight = 56.dp
 
-    MaterialTheme {
-        BottomSheetScaffold(
-            sheetContent = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(miniPlayerHeight)
-                ) {
-                    MiniPlayer(player)
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Home.route
+    ) {
+        composable(Screen.Home.route) {
+            BottomSheetScaffold(
+                sheetContent = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(miniPlayerHeight)
+                    ) {
+                        MiniPlayer(player)
+                    }
+                },
+                scaffoldState = scaffoldState,
+                sheetPeekHeight = miniPlayerHeight,
+                sheetBackgroundColor = Color(0xFFD2D4FF),
+            )
+            { innerPadding ->
+                HomeScreen(homeScreenViewModel, Modifier.padding(innerPadding)) {
+                    player.startStream(it)
                 }
-            },
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = miniPlayerHeight,
-            sheetBackgroundColor = Color(0xFFD2D4FF),
-        )
-        { innerPadding ->
-            HomeScreen(homeScreenViewModel, Modifier.padding(innerPadding)) {
-                player.startStream(it)
             }
         }
+
+        composable(Screen.PodcastEpisodes.route) {
+            PodcastEpisodesScreen()
+        }
     }
+
+//    MaterialTheme {
+//        BottomSheetScaffold(
+//            sheetContent = {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(miniPlayerHeight)
+//                ) {
+//                    MiniPlayer(player)
+//                }
+//            },
+//            scaffoldState = scaffoldState,
+//            sheetPeekHeight = miniPlayerHeight,
+//            sheetBackgroundColor = Color(0xFFD2D4FF),
+//        )
+//        { innerPadding ->
+//            HomeScreen(homeScreenViewModel, Modifier.padding(innerPadding)) {
+//                player.startStream(it)
+//            }
+//        }
+//    }
 }

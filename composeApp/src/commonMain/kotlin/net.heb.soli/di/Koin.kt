@@ -7,8 +7,10 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import net.heb.soli.HomeScreenViewModel
 import net.heb.soli.stream.StreamRepository
 import net.heb.soli.network.SoliApi
+import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -30,10 +32,10 @@ fun commonModule() = module {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        //Napier.d(tag = "HttpClient", message = message)
+                        print(message = message)
                     }
                 }
-                level = LogLevel.BODY
+                level = LogLevel.ALL
             }
             install(ContentNegotiation) {
                 json(Json {
@@ -47,4 +49,6 @@ fun commonModule() = module {
 
     singleOf(::SoliApi)
     singleOf(::StreamRepository)
+
+    viewModel { HomeScreenViewModel(get()) }
 }

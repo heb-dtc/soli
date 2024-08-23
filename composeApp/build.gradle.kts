@@ -68,9 +68,11 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(libs.koin.core)
-            implementation(libs.koin.compose.jvm)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.navigation.compose)
+            implementation(libs.viewmodel.compose)
 
             implementation(libs.kotlinx.datetime)
         }

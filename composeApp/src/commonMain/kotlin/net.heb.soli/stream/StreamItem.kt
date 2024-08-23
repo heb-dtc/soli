@@ -3,7 +3,7 @@ package net.heb.soli.stream
 import kotlinx.serialization.Serializable
 
 enum class StreamType {
-    Radio, Ambient, Song, Podcast, Spotify
+    Radio, Ambient, Song, PodcastFeed, SpotifyPlaylist, PodcastEpisode
 }
 
 @Serializable
