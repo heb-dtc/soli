@@ -15,3 +15,18 @@ data class Feed(
     val author: String,
     val image: String,
 )
+
+@Serializable
+data class EpisodeWrapper(
+    val items: List<Episode>
+)
+
+@Serializable
+data class Episode(
+    val id: Long,
+    val title: String,
+    val description: String,
+    val enclosureUrl: String,
+    val episode: Int,
+    val image: String,
+)
