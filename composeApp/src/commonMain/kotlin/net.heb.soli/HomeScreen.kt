@@ -33,14 +33,15 @@ import net.heb.soli.stream.StreamType
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
     modifier: Modifier = Modifier,
-    onStartStream: (StreamItem) -> Unit
+    navigateToPodcastEpisodes: (id: Long) -> Unit
 ) {
     val state = viewModel.state.collectAsState()
 
     HomeScreen(
         state = state.value,
         modifier = modifier,
-        onStartStream = onStartStream
+        onStartStream = viewModel::startStream,
+        navigateToPodcastEpisodes = navigateToPodcastEpisodes
     )
 }
 
@@ -49,6 +50,7 @@ fun HomeScreen(
     state: HomeScreenState,
     modifier: Modifier = Modifier,
     onStartStream: (StreamItem) -> Unit,
+    navigateToPodcastEpisodes: (id: Long) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -84,7 +86,9 @@ fun HomeScreen(
             items = state.streamItems.filter {
                 it.type == StreamType.PodcastFeed
             },
-            onClick = onStartStream,
+            onClick = {
+                navigateToPodcastEpisodes(it.id)
+            },
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 

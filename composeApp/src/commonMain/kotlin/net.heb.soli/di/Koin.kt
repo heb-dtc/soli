@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import net.heb.soli.HomeScreenViewModel
 import net.heb.soli.stream.StreamRepository
 import net.heb.soli.network.SoliApi
+import net.heb.soli.podcast.PodcastEpisodesScreenViewModel
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -50,5 +51,6 @@ fun commonModule() = module {
     singleOf(::SoliApi)
     singleOf(::StreamRepository)
 
-    viewModel { HomeScreenViewModel(get()) }
+    viewModel { HomeScreenViewModel(get(), get()) }
+    viewModel { PodcastEpisodesScreenViewModel(get(), get()) }
 }

@@ -1,4 +1,4 @@
-package net.heb.soli
+package net.heb.soli.podcast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,22 +8,22 @@ import net.heb.soli.player.Player
 import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamRepository
 
-data class HomeScreenState(
+data class PodcastEpisodesScreenScreenState(
     val streamItems: List<StreamItem> = emptyList()
 )
 
-class HomeScreenViewModel(
+class PodcastEpisodesScreenViewModel(
     private val streamRepository: StreamRepository,
     private val player: Player
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow(HomeScreenState())
+    private var _state = MutableStateFlow(PodcastEpisodesScreenScreenState())
     val state = _state
 
     init {
         viewModelScope.launch {
-            streamRepository.observeStreams().collect {
-                _state.value = HomeScreenState(streamItems = it)
+            streamRepository.observePodcastEpisodes("555224").collect {
+                _state.value = PodcastEpisodesScreenScreenState(streamItems = it)
             }
         }
     }

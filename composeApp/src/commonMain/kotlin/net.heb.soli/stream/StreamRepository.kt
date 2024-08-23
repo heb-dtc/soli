@@ -2,10 +2,19 @@ package net.heb.soli.stream
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import net.heb.soli.network.SoliApi
 
 class StreamRepository(private val api: SoliApi) {
+
+    fun observeStreams(): Flow<List<StreamItem>> {
+        return flow {
+            emit(getStreams())
+        }.flowOn(Dispatchers.IO)
+    }
 
     suspend fun getStreams(): List<StreamItem> {
         return withContext(Dispatchers.IO) {
@@ -26,8 +35,20 @@ class StreamRepository(private val api: SoliApi) {
     }
 
     suspend fun getPodcastStreams(): List<StreamItem> {
-        return listOf(api.getPodcastFeed("555224"), api.getPodcastFeed("217966"),
-            api.getPodcastFeed("555224"), api.getPodcastFeed("509931"))
+        return listOf(
+            api.getPodcastFeed("555224"), api.getPodcastFeed("217966"),
+            api.getPodcastFeed("555224"), api.getPodcastFeed("509931")
+        )
+    }
+
+    fun observePodcastEpisodes(feedId: String): Flow<List<StreamItem>> {
+        return flow {
+            emit(getPodcastEpisodes(feedId))
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getPodcastEpisodes(feedId: String): List<StreamItem> {
+        return api.getPodcastEpisodes(feedId)
     }
 
     fun getSpotifyStreams() = emptyList<StreamItem>()
