@@ -75,6 +75,8 @@ kotlin {
             implementation(libs.viewmodel.compose)
 
             implementation(libs.kotlinx.datetime)
+
+            implementation(libs.material3.window.size)
         }
     }
 }

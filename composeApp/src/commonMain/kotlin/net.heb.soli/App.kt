@@ -15,6 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -47,7 +50,9 @@ fun App() {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 fun Soli() {
 
@@ -65,6 +70,9 @@ fun Soli() {
     // Get the name of the current screen
     val currentScreen = backStackEntry?.destination?.route ?: Screen.Home.route
 
+    val windowSizeClass = calculateWindowSizeClass()
+    val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
+
     BottomSheetScaffold(
         topBar = {
             if (currentScreen == Screen.PodcastEpisodes.route) {
@@ -72,7 +80,7 @@ fun Soli() {
                     title = {
                         Text(
                             "Podcast Episodes",
-                            fontSize = 48.sp,
+                            fontSize = if (isCompact) 36.sp else 48.sp,
                             fontWeight = FontWeight.Bold
                         )
                     },
@@ -120,6 +128,7 @@ fun Soli() {
             composable(Screen.PodcastEpisodes.route) {
                 PodcastEpisodesScreen(
                     viewModel = podcastEpisodesScreenViewModel,
+                    modifier = Modifier.padding(innerPadding),
                 )
             }
         }
