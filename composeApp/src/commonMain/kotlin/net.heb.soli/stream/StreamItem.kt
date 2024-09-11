@@ -7,10 +7,16 @@ enum class StreamType {
 }
 
 @Serializable
+data class StreamLibrary(
+    val streams: List<Stream>
+)
+
+@Serializable
 data class Stream(
     val id: Long,
     val name: String,
-    val url: String
+    val url: String,
+    val type: StreamType
 )
 
 data class StreamItem(val id: Long, val name: String, val uri: String, val type: StreamType)

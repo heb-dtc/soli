@@ -5,11 +5,16 @@ import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.datetime.Clock
 import net.heb.soli.stream.EpisodeWrapper
 import net.heb.soli.stream.FeedWrapper
 import net.heb.soli.stream.Stream
 import net.heb.soli.stream.StreamItem
+import net.heb.soli.stream.StreamLibrary
 import net.heb.soli.stream.StreamType
 
 class SoliApi(
@@ -20,14 +25,23 @@ class SoliApi(
         private const val BASE_URL = "https://music.hebus.net"
     }
 
-    suspend fun getLibrary(): List<Stream> {
-        val response = httpClient.get("$BASE_URL/library") {
+    suspend fun getLibrary(): StreamLibrary {
+        val response = httpClient.get("$BASE_URL/library/soli/flow") {
             createHeaders()
         }
 
         print("response: $response")
 
         return response.body()
+    }
+
+    suspend fun updateLibrary(library: StreamLibrary) {
+        val response = httpClient.post("$BASE_URL/library/soli/flow") {
+            createHeaders()
+            contentType(ContentType.Application.Json)
+            setBody(library)
+        }
+        print("response: $response")
     }
 
     suspend fun getPodcastFeed(feedId: String): StreamItem {

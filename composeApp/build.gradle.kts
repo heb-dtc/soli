@@ -1,3 +1,4 @@
+import com.google.devtools.ksp.gradle.KspTaskMetadata
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
@@ -7,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -26,6 +28,10 @@ kotlin {
     }
     
     sourceSets {
+        sourceSets.commonMain {
+            kotlin.srcDir("build/generated/ksp/metadata")
+        }
+
         val desktopMain by getting
         
         androidMain.dependencies {
@@ -77,6 +83,9 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             implementation(libs.material3.window.size)
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
     }
 }
@@ -133,3 +142,23 @@ compose.desktop {
         }
     }
 }
+
+dependencies {
+    //ksp(libs.room.compiler)
+    add("kspAndroid",libs.room.compiler)
+    add("kspIosSimulatorArm64",libs.room.compiler)
+    add("kspIosX64",libs.room.compiler)
+    add("kspIosArm64",libs.room.compiler)
+    add("kspDesktop", libs.room.compiler)
+}
+
+// FIXME cant use the room plugin for now
+//room {
+//    schemaDirectory("$projectDir/schemas")
+//}
+ksp {
+    arg("room.schemaLocation", "${projectDir}/schemas")
+}
+
+// Solves implicit dependency issue and IDEs source code detection.
+kotlin.sourceSets.commonMain { tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) } }

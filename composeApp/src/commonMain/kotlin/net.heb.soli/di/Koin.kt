@@ -8,6 +8,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import net.heb.soli.HomeScreenViewModel
+import net.heb.soli.db.getRoomDatabase
 import net.heb.soli.stream.StreamRepository
 import net.heb.soli.network.SoliApi
 import net.heb.soli.podcast.PodcastEpisodesScreenViewModel
@@ -49,6 +50,9 @@ fun commonModule() = module {
     }
 
     singleOf(::SoliApi)
+
+    singleOf(::getRoomDatabase)
+
     singleOf(::StreamRepository)
 
     viewModel { HomeScreenViewModel(get(), get()) }
