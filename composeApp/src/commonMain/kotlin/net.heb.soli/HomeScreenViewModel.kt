@@ -27,9 +27,10 @@ class HomeScreenViewModel(
         streamRepository.observeRadios(),
         streamRepository.observeAmbientStream(),
         streamRepository.observerPodcastFeeds(),
-        streamRepository.observeTracks()
-    ) { radios, ambients, podcasts, tracks ->
-        radios + ambients + podcasts + tracks
+        streamRepository.observeTracks(),
+        streamRepository.observeSpotifyStreams()
+    ) { radios, ambients, podcasts, tracks, spotifyPlaylists ->
+        radios + ambients + podcasts + tracks + spotifyPlaylists
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {

@@ -1,5 +1,6 @@
 package net.heb.soli
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -58,7 +60,13 @@ fun HomeScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Text("Radios", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
+        Text(
+            "Radios",
+            Modifier.padding(8.dp),
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
+        )
         ItemGrid(
             items = state.streamItems.filter {
                 it.type == StreamType.Radio
@@ -67,7 +75,10 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 
-        Text("Ambient", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
+        Text(
+            "Ambient", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
+        )
         ItemGrid(
             items = state.streamItems.filter {
                 it.type == StreamType.Ambient
@@ -80,7 +91,8 @@ fun HomeScreen(
             "Podcast",
             Modifier.padding(8.dp),
             fontSize = 48.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
             items = state.streamItems.filter {
@@ -96,7 +108,8 @@ fun HomeScreen(
             "Spotify",
             Modifier.padding(8.dp),
             fontSize = 48.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
             items = state.streamItems.filter {
@@ -106,7 +119,10 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 
-        Text("Songs", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold)
+        Text(
+            "Songs", Modifier.padding(8.dp), fontSize = 48.sp, fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
+        )
         ItemGrid(
             items = state.streamItems.filter {
                 it.type == StreamType.Song
@@ -118,7 +134,11 @@ fun HomeScreen(
 }
 
 @Composable
-fun ItemGrid(items: List<StreamItem>, onClick: (StreamItem) -> Unit, modifier: Modifier = Modifier) {
+fun ItemGrid(
+    items: List<StreamItem>,
+    onClick: (StreamItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val colors = listOf(0xFFe63946, 0xFFf1faee, 0xFFa8dadc, 0xFF457b9d, 0xFF1d3557)
 
     Row(
@@ -172,8 +192,9 @@ fun RadioItem(
 ) {
     Card(shape = RoundedCornerShape(corner = CornerSize(12.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = color,
+            containerColor = MaterialTheme.colorScheme.primary,
         ),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         modifier = modifier
             .height(200.dp)
             .width(200.dp)
@@ -187,7 +208,7 @@ fun RadioItem(
                 .padding(8.dp),
             fontWeight = FontWeight.Bold,
             fontSize = 34.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.secondary
         )
     }
 }
