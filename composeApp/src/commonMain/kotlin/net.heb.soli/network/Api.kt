@@ -10,9 +10,9 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.datetime.Clock
+import net.heb.soli.spotify.UserPlaylists
 import net.heb.soli.stream.EpisodeWrapper
 import net.heb.soli.stream.FeedWrapper
-import net.heb.soli.stream.Stream
 import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamLibrary
 import net.heb.soli.stream.StreamType
@@ -99,5 +99,24 @@ class SoliApi(
 
     private fun HttpRequestBuilder.createHeaders() {
         header("Authorization", "Bearer 12ILK56UB")
+    }
+
+    suspend fun getSpotifyLikedTracks(): List<StreamItem> {
+        val response = httpClient.get("https://api.spotify.com/v1/users/heb_dtc/playlists") {
+            header(
+                "Authorization",
+                "Bearer BQBf0lNzT-BHG0GU6wIjT9hjvMISddfEDwF_qlTSdO2fwnik7n84DdgTlXP79maz3lA343RoNYNiKD7S8S6JaY9IWIM_mnYmjxudqCZNg3ip5i9qrGc"
+            )
+        }
+
+        val wrapper = response.body<UserPlaylists>()
+        return wrapper.items.mapIndexed { index, it ->
+            StreamItem(
+                id = 9999 + index.toLong(),
+                name = it.name,
+                uri = it.id,
+                type = StreamType.SpotifyPlaylist
+            )
+        }.toList()
     }
 }
