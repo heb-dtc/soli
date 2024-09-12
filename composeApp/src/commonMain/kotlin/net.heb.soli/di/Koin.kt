@@ -9,14 +9,14 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import net.heb.soli.HomeScreenViewModel
 import net.heb.soli.db.getRoomDatabase
-import net.heb.soli.stream.StreamRepository
 import net.heb.soli.network.SoliApi
 import net.heb.soli.podcast.PodcastEpisodesScreenViewModel
-import org.koin.compose.viewmodel.dsl.viewModel
+import net.heb.soli.stream.StreamRepository
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 fun initKoin(appDeclaration: (KoinApplication.() -> Unit)? = null) = startKoin {
@@ -27,6 +27,11 @@ fun initKoin(appDeclaration: (KoinApplication.() -> Unit)? = null) = startKoin {
 }
 
 expect fun platformModule(): Module
+
+fun viewModelModule() = module {
+    viewModelOf(::HomeScreenViewModel)
+    viewModelOf(::PodcastEpisodesScreenViewModel)
+}
 
 fun commonModule() = module {
     single {
@@ -54,7 +59,4 @@ fun commonModule() = module {
     singleOf(::getRoomDatabase)
 
     singleOf(::StreamRepository)
-
-    viewModel { HomeScreenViewModel(get(), get()) }
-    viewModel { PodcastEpisodesScreenViewModel(get(), get()) }
 }

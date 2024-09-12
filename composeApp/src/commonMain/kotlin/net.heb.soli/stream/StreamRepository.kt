@@ -55,7 +55,7 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                         PodcastFeedEntity(
                             id = it.id,
                             name = it.name,
-                            remoteId = it.id,
+                            remoteId = it.remoteId!!,
                             imageUrl = it.uri
                         )
                     )
@@ -79,7 +79,7 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
     private suspend fun getStreams(): List<StreamItem> {
         return withContext(Dispatchers.IO) {
             val items = api.getLibrary().streams.map {
-                StreamItem(it.id, it.name, it.url, it.type)
+                StreamItem(id = it.id, name = it.name, uri = it.url, type = it.type)
             }
 
             return@withContext items
@@ -89,35 +89,71 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
     fun observeRadios(): Flow<List<StreamItem>> {
         return db.radioDao().observe()
             .map { entity ->
-                entity.map { StreamItem(it.id, it.name, it.url, StreamType.Radio) }
+                entity.map {
+                    StreamItem(
+                        id = it.id,
+                        name = it.name,
+                        uri = it.url,
+                        type = StreamType.Radio
+                    )
+                }
             }.flowOn(Dispatchers.IO)
     }
 
     fun observeAmbientStream(): Flow<List<StreamItem>> {
         return db.ambientDao().observe()
             .map { entity ->
-                entity.map { StreamItem(it.id, it.name, it.url, StreamType.Ambient) }
+                entity.map {
+                    StreamItem(
+                        id = it.id,
+                        name = it.name,
+                        uri = it.url,
+                        type = StreamType.Ambient
+                    )
+                }
             }.flowOn(Dispatchers.IO)
     }
 
     fun observerPodcastFeeds(): Flow<List<StreamItem>> {
         return db.podcastFeedDao().observe()
             .map { entity ->
-                entity.map { StreamItem(it.id, it.name, it.imageUrl, StreamType.PodcastFeed) }
+                entity.map {
+                    StreamItem(
+                        id = it.id,
+                        name = it.name,
+                        uri = it.imageUrl,
+                        type = StreamType.PodcastFeed,
+                        remoteId = it.remoteId
+                    )
+                }
             }.flowOn(Dispatchers.IO)
     }
 
     fun observeTracks(): Flow<List<StreamItem>> {
         return db.trackEntityDao().observe()
             .map { entity ->
-                entity.map { StreamItem(it.id, it.name, it.url, StreamType.Song) }
+                entity.map {
+                    StreamItem(
+                        id = it.id,
+                        name = it.name,
+                        uri = it.url,
+                        type = StreamType.Song
+                    )
+                }
             }.flowOn(Dispatchers.IO)
     }
 
     fun observerPodcastEpisodes(): Flow<List<StreamItem>> {
         return db.podcastEpisodeEntityDao().observe()
             .map { entity ->
-                entity.map { StreamItem(it.id, it.name, it.url, StreamType.PodcastEpisode) }
+                entity.map {
+                    StreamItem(
+                        id = it.id,
+                        name = it.name,
+                        uri = it.url,
+                        type = StreamType.PodcastEpisode
+                    )
+                }
             }.flowOn(Dispatchers.IO)
     }
 

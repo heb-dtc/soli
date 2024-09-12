@@ -28,25 +28,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import net.heb.soli.di.viewModelModule
 import net.heb.soli.player.MiniPlayer
 import net.heb.soli.player.Player
 import net.heb.soli.podcast.PodcastEpisodesScreen
-import net.heb.soli.podcast.PodcastEpisodesScreenViewModel
 import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
+import org.koin.compose.module.rememberKoinModules
 
 sealed class Screen(val route: String) {
     data object Home : Screen(route = "home")
-    data object PodcastEpisodes : Screen(route = "podcast-episodes")
+    data object PodcastEpisodes : Screen(route = "podcast-episodes/{feedId}")
 }
 
 @Composable
 fun App() {
     KoinContext {
+
+        rememberKoinModules {
+            listOf(
+                viewModelModule(),
+            )
+        }
+
         SoliTheme {
             Soli()
         }
@@ -61,8 +71,6 @@ fun App() {
 fun Soli() {
 
     val player = koinInject<Player>()
-    val homeScreenViewModel: HomeScreenViewModel = koinInject()
-    val podcastEpisodesScreenViewModel: PodcastEpisodesScreenViewModel = koinInject()
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -125,16 +133,24 @@ fun Soli() {
             ) {
                 composable(Screen.Home.route) {
                     HomeScreen(
-                        viewModel = homeScreenViewModel,
                         modifier = Modifier.padding(innerPadding),
-                        navigateToPodcastEpisodes = {
-                            navController.navigate(Screen.PodcastEpisodes.route)
+                        navigateToPodcastEpisodes = { id ->
+                            navController.navigate(
+                                Screen.PodcastEpisodes.route.replace(
+                                    "{feedId}",
+                                    id.toString()
+                                )
+                            )
                         })
                 }
 
-                composable(Screen.PodcastEpisodes.route) {
+                composable(
+                    Screen.PodcastEpisodes.route,
+                    arguments = listOf(
+                        navArgument("feedId") { type = NavType.StringType },
+                    ),
+                ) {
                     PodcastEpisodesScreen(
-                        viewModel = podcastEpisodesScreenViewModel,
                         modifier = Modifier.padding(innerPadding),
                     )
                 }

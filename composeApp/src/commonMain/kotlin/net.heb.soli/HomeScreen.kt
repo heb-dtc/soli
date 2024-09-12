@@ -24,16 +24,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamType
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel,
+    viewModel: HomeScreenViewModel = koinViewModel<HomeScreenViewModel>(),
     modifier: Modifier = Modifier,
     navigateToPodcastEpisodes: (id: Long) -> Unit
 ) {
@@ -99,7 +99,9 @@ fun HomeScreen(
                 it.type == StreamType.PodcastFeed
             },
             onClick = {
-                navigateToPodcastEpisodes(it.id)
+                it.remoteId?.let { feedId ->
+                    navigateToPodcastEpisodes(feedId)
+                }
             },
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -139,18 +141,13 @@ fun ItemGrid(
     onClick: (StreamItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = listOf(0xFFe63946, 0xFFf1faee, 0xFFa8dadc, 0xFF457b9d, 0xFF1d3557)
-
     Row(
         modifier = modifier.padding(horizontal = 8.dp)
             .horizontalScroll(rememberScrollState()),
     ) {
         items.forEachIndexed { index, media ->
-            val colorIndex = if (index >= colors.size) (colors.indices).random() else index
-
             RadioItem(
                 streamItem = media,
-                color = Color(colors[colorIndex]),
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = onClick
             )
@@ -160,15 +157,11 @@ fun ItemGrid(
 
 @Composable
 internal fun StreamItemList(medias: List<StreamItem>, onClick: (StreamItem) -> Unit) {
-    val colors = listOf(0xFFe63946, 0xFFf1faee, 0xFFa8dadc, 0xFF457b9d, 0xFF1d3557)
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(horizontal = 8.dp)
     ) {
         itemsIndexed(items = medias) { index, media ->
-            val colorIndex = if (index >= colors.size) (colors.indices).random() else index
-
             val modifier = if (index % 2 == 0) {
                 Modifier.padding(start = 0.dp, end = 4.dp, top = 8.dp, bottom = 0.dp)
             } else {
@@ -176,7 +169,7 @@ internal fun StreamItemList(medias: List<StreamItem>, onClick: (StreamItem) -> U
             }
 
             RadioItem(
-                media, Color(colors[colorIndex]),
+                media,
                 modifier, onClick
             )
         }
@@ -186,7 +179,6 @@ internal fun StreamItemList(medias: List<StreamItem>, onClick: (StreamItem) -> U
 @Composable
 fun RadioItem(
     streamItem: StreamItem,
-    color: Color,
     modifier: Modifier,
     onClick: (StreamItem) -> Unit
 ) {

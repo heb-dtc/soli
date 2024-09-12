@@ -1,5 +1,6 @@
 package net.heb.soli.podcast
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -18,15 +20,16 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.heb.soli.stream.StreamItem
+import org.koin.compose.viewmodel.koinNavViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PodcastEpisodesScreen(
-    viewModel: PodcastEpisodesScreenViewModel,
+    viewModel: PodcastEpisodesScreenViewModel = koinNavViewModel<PodcastEpisodesScreenViewModel>(),
     modifier: Modifier = Modifier
 ) {
     val state = viewModel.state.collectAsState()
@@ -74,8 +77,9 @@ fun PodcastEpisodeCard(
 ) {
     Card(shape = RoundedCornerShape(corner = CornerSize(12.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.primary,
         ),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         modifier = modifier
             .height(200.dp)
             .width(200.dp)
@@ -90,7 +94,7 @@ fun PodcastEpisodeCard(
                 .padding(8.dp),
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.secondary
         )
     }
 }

@@ -3,16 +3,16 @@ agp = "8.2.2"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
-jetpack-compose-bom = "2024.06.00"
-compose-multiplatform = "1.6.11"
+jetpack-compose-bom = "2024.09.00"
+compose-multiplatform = "1.7.0-beta01"
 androidx-activityCompose = "1.9.1"
 androidx-lifecycle = "2.8.4"
-androidx-navigation = "2.7.0-alpha07"
+androidx-navigation = "2.8.0-alpha09"
 viewmodel = "2.8.0"
 kotlinxSerialization = "1.6.3"
 ktor = "2.3.12"
 coroutines = "1.8.0"
-koin = "3.6.0-alpha1"
+koin = "4.0.0-RC2"
 kotlin = "2.0.0"
 koinCompose = "1.1.5"
 koinComposeViewModel = "1.2.0-Beta4"
@@ -32,10 +32,12 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 
 material3-window-size = { group = "dev.chrisbanes.material3", name = "material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
 
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCompose" }
-koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinComposeViewModel" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-android = { module = "io.insert-koin:koin-android"}
+koin-compose = { module = "io.insert-koin:koin-compose"}
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel"}
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation"}
 
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

@@ -14,9 +14,16 @@ data class StreamLibrary(
 @Serializable
 data class Stream(
     val id: Long,
+    val remoteId: Long? = null,
     val name: String,
     val url: String,
     val type: StreamType
 )
 
-data class StreamItem(val id: Long, val name: String, val uri: String, val type: StreamType)
+data class StreamItem(
+    val id: Long,
+    val name: String,
+    val uri: String,
+    val type: StreamType,
+    val remoteId: Long? = null
+)
