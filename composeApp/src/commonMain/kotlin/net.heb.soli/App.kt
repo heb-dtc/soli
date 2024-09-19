@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import net.heb.soli.di.viewModelModule
 import net.heb.soli.player.MiniPlayer
+import net.heb.soli.player.ModalPlayer
 import net.heb.soli.player.Player
 import net.heb.soli.podcast.PodcastEpisodesScreen
 import org.koin.compose.KoinContext
@@ -94,7 +96,8 @@ fun Soli() {
                         Text(
                             "Podcast Episodes",
                             fontSize = if (isCompact) 36.sp else 48.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     navigationIcon = {
@@ -115,10 +118,10 @@ fun Soli() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        //showBottomSheet = true
+                        showBottomSheet = true
                     }
             ) {
-                MiniPlayer(player)
+                MiniPlayer()
             }
         },
     )
@@ -156,22 +159,16 @@ fun Soli() {
                 }
             }
 
-            //TODO implement a full screen player
-//        if (showBottomSheet) {
-//            ModalBottomSheet(
-//                sheetState = sheetState,
-//                sheetMaxWidth = 8000.dp,
-//                onDismissRequest = { showBottomSheet = false },
-//                content = {
-//                    Button(onClick = {
-//                        showBottomSheet = false
-//                    }) {
-//                        Text("Hide bottom sheet")
-//                    }
-//
-//                }
-//            )
-//        }
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    sheetState = sheetState,
+                    sheetMaxWidth = 8000.dp,
+                    onDismissRequest = { showBottomSheet = false },
+                    content = {
+                        ModalPlayer()
+                    }
+                )
+            }
         }
     }
 }

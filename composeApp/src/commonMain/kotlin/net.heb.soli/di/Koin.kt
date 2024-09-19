@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import net.heb.soli.HomeScreenViewModel
 import net.heb.soli.db.getRoomDatabase
 import net.heb.soli.network.SoliApi
+import net.heb.soli.player.PlayerViewModel
 import net.heb.soli.podcast.PodcastEpisodesScreenViewModel
 import net.heb.soli.stream.StreamRepository
 import org.koin.core.KoinApplication
@@ -31,6 +32,7 @@ expect fun platformModule(): Module
 fun viewModelModule() = module {
     viewModelOf(::HomeScreenViewModel)
     viewModelOf(::PodcastEpisodesScreenViewModel)
+    viewModelOf(::PlayerViewModel)
 }
 
 fun commonModule() = module {
@@ -55,8 +57,6 @@ fun commonModule() = module {
     }
 
     singleOf(::SoliApi)
-
     singleOf(::getRoomDatabase)
-
     singleOf(::StreamRepository)
 }

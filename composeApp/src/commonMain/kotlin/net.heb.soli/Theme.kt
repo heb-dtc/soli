@@ -14,11 +14,19 @@ val green = Color(0xFF82ee69)
 private val LightColors = lightColorScheme(
     primary = red,
     secondary = yellow,
+    surface = red,
+    onSurface = yellow,
+    surfaceContainerLow = yellow,
+    onSurfaceVariant = red
 )
 
 private val DarkColors = lightColorScheme(
     primary = purple,
     secondary = green,
+    surface = purple,
+    onSurface = green,
+    surfaceContainerLow = green,
+    onSurfaceVariant = purple
 )
 
 @Composable

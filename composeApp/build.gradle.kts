@@ -13,9 +13,9 @@ plugins {
 
 kotlin {
     androidTarget()
-    
+
     jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -26,14 +26,14 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         sourceSets.commonMain {
             kotlin.srcDir("build/generated/ksp/metadata")
         }
 
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.ui)
             implementation(libs.androidx.activity.compose)
@@ -149,10 +149,10 @@ compose.desktop {
 
 dependencies {
     //ksp(libs.room.compiler)
-    add("kspAndroid",libs.room.compiler)
-    add("kspIosSimulatorArm64",libs.room.compiler)
-    add("kspIosX64",libs.room.compiler)
-    add("kspIosArm64",libs.room.compiler)
+    add("kspAndroid", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
     add("kspDesktop", libs.room.compiler)
 }
 

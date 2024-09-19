@@ -79,7 +79,13 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
     private suspend fun getStreams(): List<StreamItem> {
         return withContext(Dispatchers.IO) {
             val items = api.getLibrary().streams.map {
-                StreamItem(id = it.id, name = it.name, uri = it.url, type = it.type)
+                StreamItem(
+                    id = it.id,
+                    name = it.name,
+                    uri = it.url,
+                    type = it.type,
+                    remoteId = it.remoteId
+                )
             }
 
             return@withContext items

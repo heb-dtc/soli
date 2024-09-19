@@ -62,5 +62,15 @@ actual class PlatformPlayer(context: Context) {
         mediaController?.release()
     }
 
+    actual fun getProgress(): Long = mediaController?.currentPosition ?: 0
+
+    actual fun getDuration(): Long {
+        return mediaController?.duration ?: 0
+    }
+
     actual fun isPlaying(): Boolean = mediaController?.isPlaying == true
+
+    actual fun seekTo(progress: Long) {
+        mediaController?.seekTo(progress)
+    }
 }
