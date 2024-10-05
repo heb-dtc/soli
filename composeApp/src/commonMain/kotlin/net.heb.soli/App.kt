@@ -150,7 +150,7 @@ fun Soli() {
                 composable(
                     Screen.PodcastEpisodes.route,
                     arguments = listOf(
-                        navArgument("feedId") { type = NavType.StringType },
+                        navArgument("feedId") { type = NavType.LongType },
                     ),
                 ) {
                     PodcastEpisodesScreen(

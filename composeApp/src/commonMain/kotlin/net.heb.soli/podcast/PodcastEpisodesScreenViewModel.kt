@@ -19,7 +19,7 @@ class PodcastEpisodesScreenViewModel(
     private val player: Player
 ) : ViewModel() {
 
-    private var podcastId = savedStateHandle.get<String>("feedId")!!
+    private var podcastId = savedStateHandle.get<Long>("feedId")!!
 
     private var _state = MutableStateFlow(PodcastEpisodesScreenScreenState())
     val state = _state

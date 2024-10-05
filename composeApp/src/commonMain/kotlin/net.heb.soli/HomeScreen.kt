@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.heb.soli.stream.StreamItem
-import net.heb.soli.stream.StreamType
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -68,9 +64,7 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
-            items = state.streamItems.filter {
-                it.type == StreamType.Radio
-            },
+            items = state.streamItems.filterIsInstance<StreamItem.RadioItem>(),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -80,9 +74,7 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
-            items = state.streamItems.filter {
-                it.type == StreamType.Ambient
-            },
+            items = state.streamItems.filterIsInstance<StreamItem.AmbientItem>(),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -95,13 +87,10 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
-            items = state.streamItems.filter {
-                it.type == StreamType.PodcastFeed
-            },
+            items = state.streamItems.filterIsInstance<StreamItem.PodcastFeedItem>(),
             onClick = {
-                it.remoteId?.let { feedId ->
-                    navigateToPodcastEpisodes(feedId)
-                }
+                val id = (it as StreamItem.PodcastFeedItem).remoteId
+                navigateToPodcastEpisodes(id)
             },
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -114,9 +103,7 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
-            items = state.streamItems.filter {
-                it.type == StreamType.SpotifyPlaylist
-            },
+            items = state.streamItems.filterIsInstance<StreamItem.SpotifyPlaylistItem>(),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
@@ -126,9 +113,7 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.secondary
         )
         ItemGrid(
-            items = state.streamItems.filter {
-                it.type == StreamType.Song
-            },
+            items = state.streamItems.filterIsInstance<StreamItem.SongItem>(),
             onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
@@ -146,7 +131,7 @@ fun ItemGrid(
             .horizontalScroll(rememberScrollState()),
     ) {
         items.forEachIndexed { index, media ->
-            RadioItem(
+            StreamItem(
                 streamItem = media,
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = onClick
@@ -156,28 +141,7 @@ fun ItemGrid(
 }
 
 @Composable
-internal fun StreamItemList(medias: List<StreamItem>, onClick: (StreamItem) -> Unit) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.padding(horizontal = 8.dp)
-    ) {
-        itemsIndexed(items = medias) { index, media ->
-            val modifier = if (index % 2 == 0) {
-                Modifier.padding(start = 0.dp, end = 4.dp, top = 8.dp, bottom = 0.dp)
-            } else {
-                Modifier.padding(start = 4.dp, end = 0.dp, top = 8.dp, bottom = 0.dp)
-            }
-
-            RadioItem(
-                media,
-                modifier, onClick
-            )
-        }
-    }
-}
-
-@Composable
-fun RadioItem(
+fun StreamItem(
     streamItem: StreamItem,
     modifier: Modifier,
     onClick: (StreamItem) -> Unit

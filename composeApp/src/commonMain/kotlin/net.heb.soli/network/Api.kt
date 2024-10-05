@@ -15,7 +15,6 @@ import net.heb.soli.stream.EpisodeWrapper
 import net.heb.soli.stream.FeedWrapper
 import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamLibrary
-import net.heb.soli.stream.StreamType
 
 class SoliApi(
     private val httpClient: HttpClient
@@ -44,7 +43,7 @@ class SoliApi(
         print("response: $response")
     }
 
-    suspend fun getPodcastFeed(feedId: String): StreamItem {
+    suspend fun getPodcastFeed(feedId: Long): StreamItem {
         val apiKey = "4SJ3XR6SF5N2SFEZ5ZZY"
         val apiSecret = "RxfyWNhPbx#sZRbTyJVz8GHfAwDDaCDjMdjWcSQ9"
         val now = Clock.System.now().toEpochMilliseconds() / 1000
@@ -62,15 +61,16 @@ class SoliApi(
         val wrapper = response.body<FeedWrapper>()
         print("response: ${wrapper.feed.title}")
 
-        return StreamItem(
-            id = feedId.toLong(),
+        return StreamItem.PodcastFeedItem(
+            id = feedId,
             name = wrapper.feed.title,
             uri = wrapper.feed.image,
-            type = StreamType.PodcastFeed
+            remoteId = feedId,
+            coverUrl = wrapper.feed.image
         )
     }
 
-    suspend fun getPodcastEpisodes(feedId: String): List<StreamItem> {
+    suspend fun getPodcastEpisodes(feedId: Long): List<StreamItem> {
         val apiKey = "4SJ3XR6SF5N2SFEZ5ZZY"
         val apiSecret = "RxfyWNhPbx#sZRbTyJVz8GHfAwDDaCDjMdjWcSQ9"
         val now = Clock.System.now().toEpochMilliseconds() / 1000
@@ -88,11 +88,15 @@ class SoliApi(
         val wrapper = response.body<EpisodeWrapper>()
 
         return wrapper.items.map {
-            StreamItem(
+            StreamItem.PodcastEpisodeItem(
                 id = it.id,
                 name = it.title,
                 uri = it.enclosureUrl,
-                type = StreamType.PodcastEpisode
+                remoteId = it.id,
+                feedId = feedId,
+                duration = it.duration.toLong(),
+                timeCode = 0,
+                played = false
             )
         }.toList()
     }
@@ -111,11 +115,10 @@ class SoliApi(
 
         val wrapper = response.body<UserPlaylists>()
         return wrapper.items.mapIndexed { index, it ->
-            StreamItem(
+            StreamItem.SpotifyPlaylistItem(
                 id = 9999 + index.toLong(),
                 name = it.name,
                 uri = it.id,
-                type = StreamType.SpotifyPlaylist
             )
         }.toList()
     }

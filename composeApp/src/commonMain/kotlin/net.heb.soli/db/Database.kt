@@ -71,6 +71,9 @@ interface PodcastFeedDao {
     @Query("SELECT * FROM PodcastFeedEntity")
     suspend fun get(): List<PodcastFeedEntity>
 
+    @Query("SELECT * FROM PodcastFeedEntity WHERE id == :id")
+    suspend fun get(id: Long): PodcastFeedEntity?
+
     @Upsert
     suspend fun upsert(entity: PodcastFeedEntity)
 }
@@ -119,8 +122,12 @@ data class PodcastFeedEntity(
 data class PodcastEpisodeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val remoteId: Long,
+    val feedId: Long,
     val name: String,
     val url: String,
+    val duration: Long,
+    val played: Boolean,
+    val timeCode: Long
 )
 
 @Entity
@@ -128,4 +135,5 @@ data class TrackEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String,
     val url: String,
+    val duration: Long
 )

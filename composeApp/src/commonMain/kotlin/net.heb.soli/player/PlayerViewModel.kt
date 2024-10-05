@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import net.heb.soli.stream.StreamType
+import net.heb.soli.stream.StreamItem
 
 data class PlayerViewState(
     val streamTitle: String = "No media",
@@ -23,7 +23,7 @@ class PlayerViewModel(private val player: Player) : ViewModel() {
             streamTitle = it.item?.name ?: "No media",
             streamSubtitle = it.item?.name,
             isPlaying = it.isPlaying,
-            canSeek = it.item?.type == StreamType.PodcastEpisode,
+            canSeek = it.item is StreamItem.PodcastEpisodeItem,
             progress = it.progress,
             duration = it.duration
         )
