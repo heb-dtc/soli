@@ -120,6 +120,22 @@ fun ModalPlayer(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(
+                    text = state.progress.toDuration(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    //modifier = Modifier.padding(horizontal = 8.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
 
         Row(
