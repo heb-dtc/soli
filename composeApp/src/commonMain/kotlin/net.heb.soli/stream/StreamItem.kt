@@ -1,5 +1,6 @@
 package net.heb.soli.stream
 
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -43,7 +44,6 @@ data class SpotifyPlaylist(
 @Serializable
 data class PodcastFeed(
     val id: Long,
-    val remoteId: Long,
     val name: String,
     val url: String,
     val coverUrl: String
@@ -52,7 +52,6 @@ data class PodcastFeed(
 @Serializable
 data class PodcastEpisode(
     val id: Long,
-    val remoteId: Long,
     val feedId: Long,
     val name: String,
     val url: String,
@@ -85,7 +84,6 @@ sealed class StreamItem(open val id: Long, open val uri: String, open val name: 
         override val id: Long,
         override val uri: String,
         override val name: String,
-        val remoteId: Long,
         val coverUrl: String,
     ) : StreamItem(id, uri, name)
 
@@ -99,7 +97,8 @@ sealed class StreamItem(open val id: Long, open val uri: String, open val name: 
         override val id: Long,
         override val uri: String,
         override val name: String,
-        val remoteId: Long,
+        val date: LocalDate,
+        val description: String,
         val feedId: Long,
         val duration: Long,
         val played: Boolean,

@@ -10,6 +10,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import net.heb.soli.spotify.UserPlaylists
 import net.heb.soli.stream.EpisodeWrapper
 import net.heb.soli.stream.FeedWrapper
@@ -65,12 +66,11 @@ class SoliApi(
             id = feedId,
             name = wrapper.feed.title,
             uri = wrapper.feed.image,
-            remoteId = feedId,
             coverUrl = wrapper.feed.image
         )
     }
 
-    suspend fun getPodcastEpisodes(feedId: Long): List<StreamItem> {
+    suspend fun getPodcastEpisodes(feedId: Long): List<StreamItem.PodcastEpisodeItem> {
         val apiKey = "4SJ3XR6SF5N2SFEZ5ZZY"
         val apiSecret = "RxfyWNhPbx#sZRbTyJVz8GHfAwDDaCDjMdjWcSQ9"
         val now = Clock.System.now().toEpochMilliseconds() / 1000
@@ -88,15 +88,17 @@ class SoliApi(
         val wrapper = response.body<EpisodeWrapper>()
 
         return wrapper.items.map {
+            val durationInMs = it.duration * 1000
             StreamItem.PodcastEpisodeItem(
                 id = it.id,
                 name = it.title,
                 uri = it.enclosureUrl,
-                remoteId = it.id,
                 feedId = feedId,
-                duration = it.duration.toLong(),
+                duration = durationInMs.toLong(),
                 timeCode = 0,
-                played = false
+                played = false,
+                description = it.description,
+                date = LocalDate.fromEpochDays(it.datePublished)
             )
         }.toList()
     }

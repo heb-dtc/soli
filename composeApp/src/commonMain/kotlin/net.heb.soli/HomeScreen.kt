@@ -89,8 +89,7 @@ fun HomeScreen(
         ItemGrid(
             items = state.streamItems.filterIsInstance<StreamItem.PodcastFeedItem>(),
             onClick = {
-                val id = (it as StreamItem.PodcastFeedItem).remoteId
-                navigateToPodcastEpisodes(id)
+                navigateToPodcastEpisodes(it.id)
             },
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )

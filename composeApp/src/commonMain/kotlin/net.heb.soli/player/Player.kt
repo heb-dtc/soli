@@ -10,6 +10,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.heb.soli.stream.StreamItem
+import net.heb.soli.stream.StreamRepository
 
 expect class PlayerBuilder {
     fun build(): Player
@@ -33,7 +34,7 @@ expect class PlatformPlayer {
     fun seekTo(progress: Long)
 }
 
-class Player(private val platformPlayer: PlatformPlayer) {
+class Player(private val platformPlayer: PlatformPlayer, private val repository: StreamRepository) {
     private var _state: MutableStateFlow<PlayerState> = MutableStateFlow(PlayerState())
 
     private var progressJob: Job? = null
@@ -63,6 +64,7 @@ class Player(private val platformPlayer: PlatformPlayer) {
 
     fun startStream(item: StreamItem) {
         platformPlayer.play(item)
+
         _state.value = _state.value.copy(item = item, isPlaying = true, duration = getDuration())
         startProgressMonitor()
     }
@@ -78,6 +80,14 @@ class Player(private val platformPlayer: PlatformPlayer) {
     fun pause() {
         platformPlayer.pause()
         _state.value = _state.value.copy(isPlaying = false)
+        if (_state.value.item is StreamItem.PodcastEpisodeItem) {
+            GlobalScope.launch {
+                repository.updateEpisodeTimeCode(
+                    id = (_state.value.item as StreamItem.PodcastEpisodeItem).id,
+                    progress = _state.value.progress
+                )
+            }
+        }
         stopProgressMonitor()
     }
 
@@ -93,6 +103,7 @@ class Player(private val platformPlayer: PlatformPlayer) {
     }
 
     fun seekTo(progress: Long) {
+        println("Seeking to $progress")
         platformPlayer.seekTo(progress)
     }
 

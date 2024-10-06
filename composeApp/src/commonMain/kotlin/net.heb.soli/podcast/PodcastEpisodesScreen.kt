@@ -2,6 +2,11 @@ package net.heb.soli.podcast
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -24,8 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.heb.soli.stream.StreamItem
+import net.heb.soli.toDuration
 import org.koin.compose.viewmodel.koinNavViewModel
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PodcastEpisodesScreen(
@@ -71,7 +76,7 @@ internal fun PodcastEpisodesScreen(
 
 @Composable
 fun PodcastEpisodeCard(
-    streamItem: StreamItem,
+    streamItem: StreamItem.PodcastEpisodeItem,
     modifier: Modifier = Modifier,
     onClick: (StreamItem) -> Unit
 ) {
@@ -88,13 +93,45 @@ fun PodcastEpisodeCard(
                 onClick(streamItem)
             }
     ) {
-        Text(
-            streamItem.name.uppercase(),
-            Modifier
-                .padding(8.dp),
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.secondary
-        )
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = streamItem.name.uppercase(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (streamItem.played) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${streamItem.timeCode.toDuration()} / ${streamItem.duration.toDuration()}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+
+                    Text(
+                        text = "played",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            } else {
+                Text(
+                    text = streamItem.duration.toDuration(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
     }
 }

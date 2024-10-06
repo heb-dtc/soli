@@ -4,15 +4,18 @@ import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.Update
 import androidx.room.Upsert
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
 
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {
     return builder.fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
@@ -80,11 +83,17 @@ interface PodcastFeedDao {
 
 @Dao
 interface PodcastEpisodeEntityDao {
-    @Query("SELECT * FROM PodcastEpisodeEntity")
-    fun observe(): Flow<List<PodcastEpisodeEntity>>
+    @Query("SELECT * FROM PodcastEpisodeEntity WHERE feedId == :feedId")
+    fun observe(feedId: Long): Flow<List<PodcastEpisodeEntity>>
 
     @Upsert
     suspend fun upsert(entity: PodcastEpisodeEntity)
+
+    @Update(entity = PodcastEpisodeEntity::class)
+    suspend fun updateTimeCode(update: TimeCodeUpdate)
+
+    @Update(entity = PodcastEpisodeEntity::class)
+    suspend fun updatePlayedStatus(update: PlayedStatusUpdate)
 }
 
 @Dao
@@ -112,22 +121,40 @@ data class AmbientEntity(
 
 @Entity
 data class PodcastFeedEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    val remoteId: Long,
+    @PrimaryKey val id: Long,
     val name: String,
     val imageUrl: String
 )
 
-@Entity
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = PodcastFeedEntity::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("feedId"),
+        onUpdate = ForeignKey.CASCADE,
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class PodcastEpisodeEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    val remoteId: Long,
+    @PrimaryKey val id: Long,
     val feedId: Long,
     val name: String,
     val url: String,
     val duration: Long,
+    val description: String,
+    val datePublished: Int,
     val played: Boolean,
     val timeCode: Long
+)
+
+data class PlayedStatusUpdate(
+    val id: Long,
+    val played: Boolean,
+)
+
+data class TimeCodeUpdate(
+    val id: Long,
+    val timeCode: Long,
 )
 
 @Entity

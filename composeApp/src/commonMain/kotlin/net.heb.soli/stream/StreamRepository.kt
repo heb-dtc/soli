@@ -7,11 +7,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
 import net.heb.soli.db.AmbientEntity
 import net.heb.soli.db.AppDatabase
+import net.heb.soli.db.PlayedStatusUpdate
 import net.heb.soli.db.PodcastEpisodeEntity
 import net.heb.soli.db.PodcastFeedEntity
 import net.heb.soli.db.RadioEntity
+import net.heb.soli.db.TimeCodeUpdate
 import net.heb.soli.db.TrackEntity
 import net.heb.soli.network.SoliApi
 
@@ -57,7 +60,6 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                             id = it.id,
                             name = it.name,
                             imageUrl = it.coverUrl,
-                            remoteId = it.remoteId
                         )
                     )
                 }
@@ -69,11 +71,12 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                             id = it.id,
                             name = it.name,
                             url = it.uri,
-                            remoteId = it.remoteId,
                             duration = it.duration,
                             timeCode = it.timeCode,
                             played = it.played,
-                            feedId = it.feedId
+                            feedId = it.feedId,
+                            description = it.description,
+                            datePublished = it.date.toEpochDays(),
                         )
                     )
                 }
@@ -113,7 +116,6 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                     id = it.id,
                     name = it.name,
                     uri = it.url,
-                    remoteId = it.remoteId,
                     coverUrl = it.coverUrl
                 )
             }
@@ -169,7 +171,6 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                         id = it.id,
                         name = it.name,
                         uri = it.imageUrl,
-                        remoteId = it.remoteId,
                         coverUrl = it.imageUrl
                     )
                 }
@@ -190,32 +191,43 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
             }.flowOn(Dispatchers.IO)
     }
 
-    fun observerPodcastEpisodes(): Flow<List<StreamItem>> {
-        return db.podcastEpisodeEntityDao().observe()
+    fun observePodcastEpisodes(podcastId: Long): Flow<List<StreamItem.PodcastEpisodeItem>> {
+        return db.podcastEpisodeEntityDao().observe(podcastId)
             .map { entity ->
                 entity.map {
                     StreamItem.PodcastEpisodeItem(
                         id = it.id,
                         name = it.name,
                         uri = it.url,
-                        remoteId = it.remoteId,
                         duration = it.duration,
                         timeCode = it.timeCode,
                         played = it.played,
-                        feedId = it.feedId
+                        feedId = it.feedId,
+                        description = it.description,
+                        date = LocalDate.fromEpochDays(it.datePublished)
                     )
                 }
             }.flowOn(Dispatchers.IO)
     }
 
-    fun observePodcastEpisodes(feedId: Long): Flow<List<StreamItem>> {
-        return flow {
-            emit(getPodcastEpisodes(feedId))
-        }.flowOn(Dispatchers.IO)
-    }
-
-    private suspend fun getPodcastEpisodes(feedId: Long): List<StreamItem> {
-        return api.getPodcastEpisodes(feedId)
+    suspend fun fetchPodcastEpisodes(feedId: Long) {
+        withContext(Dispatchers.IO) {
+            api.getPodcastEpisodes(feedId).map { episode ->
+                db.podcastEpisodeEntityDao().upsert(
+                    PodcastEpisodeEntity(
+                        id = episode.id,
+                        name = episode.name,
+                        url = episode.uri,
+                        duration = episode.duration,
+                        timeCode = episode.timeCode,
+                        played = episode.played,
+                        feedId = episode.feedId,
+                        description = episode.description,
+                        datePublished = episode.date.toEpochDays()
+                    )
+                )
+            }
+        }
     }
 
     fun observeSpotifyStreams(): Flow<List<StreamItem>> {
@@ -233,10 +245,27 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                     id = it.id,
                     uri = it.imageUrl,
                     name = it.name,
-                    remoteId = it.remoteId,
                     coverUrl = it.imageUrl
                 )
             }
+        }
+    }
+
+    suspend fun updateEpisodeTimeCode(id: Long, progress: Long) {
+        withContext(Dispatchers.IO) {
+            db.podcastEpisodeEntityDao()
+                .updateTimeCode(TimeCodeUpdate(id = id, timeCode = progress))
+        }
+    }
+
+    suspend fun updateEpisodePlayedStatus(id: Long, played: Boolean) {
+        withContext(Dispatchers.IO) {
+            db.podcastEpisodeEntityDao().updatePlayedStatus(
+                PlayedStatusUpdate(
+                    id = id,
+                    played = played
+                )
+            )
         }
     }
 }

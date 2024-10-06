@@ -8,10 +8,11 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
 import net.heb.soli.stream.StreamItem
+import net.heb.soli.stream.StreamRepository
 
-actual class PlayerBuilder(private val context: Context) {
+actual class PlayerBuilder(private val context: Context, private val repository: StreamRepository) {
     actual fun build(): Player {
-        return Player(PlatformPlayer(context = context))
+        return Player(PlatformPlayer(context = context), repository = repository)
     }
 }
 

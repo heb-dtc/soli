@@ -28,6 +28,6 @@ data class Episode(
     val description: String,
     val enclosureUrl: String,
     val duration: Int,
-    //val episode: Int,
+    val datePublished: Int,
     val image: String,
 )

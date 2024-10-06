@@ -10,7 +10,7 @@ import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamRepository
 
 data class PodcastEpisodesScreenScreenState(
-    val streamItems: List<StreamItem> = emptyList()
+    val streamItems: List<StreamItem.PodcastEpisodeItem> = emptyList()
 )
 
 class PodcastEpisodesScreenViewModel(
@@ -30,9 +30,23 @@ class PodcastEpisodesScreenViewModel(
                 _state.value = PodcastEpisodesScreenScreenState(streamItems = it)
             }
         }
+
+        viewModelScope.launch {
+            streamRepository.fetchPodcastEpisodes(podcastId)
+        }
     }
 
     fun startStream(item: StreamItem) {
         player.startStream(item)
+
+        if (item is StreamItem.PodcastEpisodeItem) {
+            if (item.timeCode > 0) {
+                player.seekTo(item.timeCode)
+            }
+        }
+
+        viewModelScope.launch {
+            streamRepository.updateEpisodePlayedStatus(id = item.id, played = true)
+        }
     }
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.heb.soli.charcoal
 import net.heb.soli.toDuration
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -59,7 +60,7 @@ fun ModalPlayer(
     ) {
         Text(
             text = state.streamTitle.uppercase(),
-            fontSize = 24.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 24.dp),
             color = MaterialTheme.colorScheme.primary
@@ -82,7 +83,7 @@ fun ModalPlayer(
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primary,
                     activeTrackColor = MaterialTheme.colorScheme.primary,
-                    //inactiveTrackColor = Color.Gray,
+                    //inactiveTrackColor = charcoal,
                 )
             )
         } else {
@@ -101,7 +102,8 @@ fun ModalPlayer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 8.dp)
+                    .padding(top = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -109,14 +111,12 @@ fun ModalPlayer(
                     text = state.progress.toDuration(),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    //modifier = Modifier.padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = state.duration.toDuration(),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    //modifier = Modifier.padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -126,7 +126,7 @@ fun ModalPlayer(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = state.progress.toDuration(),

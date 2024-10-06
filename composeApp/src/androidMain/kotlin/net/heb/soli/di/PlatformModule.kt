@@ -9,7 +9,7 @@ import org.koin.dsl.module
 
 actual fun platformModule() = module {
     single<Player> {
-        PlayerBuilder(get()).build()
+        PlayerBuilder(get(), get()).build()
     }
 
     single<RoomDatabase.Builder<AppDatabase>> {

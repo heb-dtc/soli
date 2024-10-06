@@ -1,6 +1,7 @@
 package net.heb.soli.player
 
 import net.heb.soli.stream.StreamItem
+import net.heb.soli.stream.StreamRepository
 import org.freedesktop.gstreamer.ElementFactory
 import org.freedesktop.gstreamer.Gst
 import org.freedesktop.gstreamer.StateChangeReturn
@@ -8,9 +9,9 @@ import org.freedesktop.gstreamer.elements.PlayBin
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
-actual class PlayerBuilder {
+actual class PlayerBuilder(private val repository: StreamRepository) {
     actual fun build(): Player {
-        return Player(PlatformPlayer())
+        return Player(PlatformPlayer(), repository)
     }
 }
 
@@ -48,7 +49,10 @@ actual class PlatformPlayer {
     }
 
     actual fun seekTo(progress: Long) {
-        audioPlayBin.seek(progress, TimeUnit.MILLISECONDS)
+        val success = audioPlayBin.seek(progress, TimeUnit.MILLISECONDS)
+        if (!success) {
+            println("Failed to seek")
+        }
     }
 
     actual fun getProgress(): Long {
