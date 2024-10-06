@@ -14,6 +14,7 @@ import net.heb.soli.db.PlayedStatusUpdate
 import net.heb.soli.db.PodcastEpisodeEntity
 import net.heb.soli.db.PodcastFeedEntity
 import net.heb.soli.db.RadioEntity
+import net.heb.soli.db.RemotePodcastEpisode
 import net.heb.soli.db.TimeCodeUpdate
 import net.heb.soli.db.TrackEntity
 import net.heb.soli.network.SoliApi
@@ -66,7 +67,7 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
 
                 is StreamItem.SpotifyPlaylistItem -> TODO()
                 is StreamItem.PodcastEpisodeItem -> {
-                    db.podcastEpisodeEntityDao().upsert(
+                    db.podcastEpisodeEntityDao().insert(
                         PodcastEpisodeEntity(
                             id = it.id,
                             name = it.name,
@@ -214,13 +215,11 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
         withContext(Dispatchers.IO) {
             api.getPodcastEpisodes(feedId).map { episode ->
                 db.podcastEpisodeEntityDao().upsert(
-                    PodcastEpisodeEntity(
+                    RemotePodcastEpisode(
                         id = episode.id,
                         name = episode.name,
                         url = episode.uri,
                         duration = episode.duration,
-                        timeCode = episode.timeCode,
-                        played = episode.played,
                         feedId = episode.feedId,
                         description = episode.description,
                         datePublished = episode.date.toEpochDays()
