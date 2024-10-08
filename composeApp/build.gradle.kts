@@ -56,6 +56,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.jna)
             implementation(libs.gstreamer.gst1)
+            implementation(libs.vlc)
         }
         commonMain.dependencies {
 

@@ -3,14 +3,17 @@ package net.heb.soli.podcast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import net.heb.soli.db.PodcastFeedEntity
 import net.heb.soli.player.Player
 import net.heb.soli.stream.StreamItem
 import net.heb.soli.stream.StreamRepository
 
 data class PodcastEpisodesScreenScreenState(
-    val streamItems: List<StreamItem.PodcastEpisodeItem> = emptyList()
+    val streamItems: List<StreamItem.PodcastEpisodeItem> = emptyList(),
+    val feedName: String = ""
 )
 
 class PodcastEpisodesScreenViewModel(
@@ -25,6 +28,11 @@ class PodcastEpisodesScreenViewModel(
     val state = _state
 
     init {
+        viewModelScope.launch {
+            streamRepository.getPodcastFeed(podcastId)?.let {
+                _state.value = state.value.copy(feedName = it.name)
+            }
+        }
         viewModelScope.launch {
             streamRepository.observePodcastEpisodes(podcastId).collect {
                 _state.value = PodcastEpisodesScreenScreenState(streamItems = it)

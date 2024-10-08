@@ -93,7 +93,7 @@ class Player(private val platformPlayer: PlatformPlayer, private val repository:
 
     fun stop() {
         platformPlayer.stop()
-        _state.value = _state.value.copy(null, false, 0, 0)
+        _state.value = _state.value.copy(item = null, isPlaying = false, progress = 0, duration = 0)
         stopProgressMonitor()
     }
 
@@ -105,6 +105,14 @@ class Player(private val platformPlayer: PlatformPlayer, private val repository:
     fun seekTo(progress: Long) {
         println("Seeking to $progress")
         platformPlayer.seekTo(progress)
+    }
+
+    fun skipForward() {
+        platformPlayer.seekTo(platformPlayer.getProgress() + 3000)
+    }
+
+    fun skipBackward() {
+        platformPlayer.seekTo(platformPlayer.getProgress() - 3000)
     }
 
     private fun getDuration(): Long {
