@@ -30,12 +30,14 @@ fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {
         RadioEntity::class,
         TrackEntity::class,
         PodcastEpisodeEntity::class,
+        YoutubeVideoEntity::class,
         AmbientEntity::class],
     version = 1
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun radioDao(): RadioDao
+    abstract fun youtubeVideoDao(): YoutubeVideoDao
     abstract fun ambientDao(): AmbientDao
     abstract fun podcastFeedDao(): PodcastFeedDao
     abstract fun podcastEpisodeEntityDao(): PodcastEpisodeEntityDao
@@ -54,6 +56,21 @@ interface RadioDao {
 
     @Upsert
     suspend fun upsert(entity: RadioEntity)
+}
+
+@Dao
+interface YoutubeVideoDao {
+    @Query("SELECT * FROM YoutubeVideoEntity")
+    fun observe(): Flow<List<YoutubeVideoEntity>>
+
+    @Query("SELECT * FROM YoutubeVideoEntity")
+    suspend fun get(): List<YoutubeVideoEntity>
+
+    @Upsert
+    suspend fun upsert(entity: YoutubeVideoEntity)
+
+    @Query("UPDATE YoutubeVideoEntity SET downloaded = 1 WHERE id == :id")
+    suspend fun markAsDownloaded(id: Long)
 }
 
 @Dao
@@ -114,6 +131,14 @@ interface TrackEntityDao {
     @Upsert
     suspend fun upsert(entity: TrackEntity)
 }
+
+@Entity
+data class YoutubeVideoEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    val name: String,
+    val url: String,
+    val downloaded: Boolean = false,
+)
 
 @Entity
 data class RadioEntity(

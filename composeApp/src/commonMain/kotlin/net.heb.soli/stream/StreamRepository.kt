@@ -17,9 +17,13 @@ import net.heb.soli.db.RadioEntity
 import net.heb.soli.db.RemotePodcastEpisode
 import net.heb.soli.db.TimeCodeUpdate
 import net.heb.soli.db.TrackEntity
+import net.heb.soli.db.YoutubeVideoEntity
 import net.heb.soli.network.SoliApi
 
-class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
+class StreamRepository(
+    private val api: SoliApi,
+    private val db: AppDatabase
+) {
 
     suspend fun sync() {
         getStreams().forEach {
@@ -78,6 +82,16 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                             feedId = it.feedId,
                             description = it.description,
                             datePublished = it.date.toEpochDays(),
+                        )
+                    )
+                }
+
+                is StreamItem.YoutubeItem -> {
+                    db.youtubeVideoDao().upsert(
+                        YoutubeVideoEntity(
+                            id = it.id,
+                            name = it.name,
+                            url = it.uri,
                         )
                     )
                 }
@@ -146,6 +160,20 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                         id = it.id,
                         name = it.name,
                         uri = it.url,
+                    )
+                }
+            }.flowOn(Dispatchers.IO)
+    }
+
+    fun observeYoutubeVideos(): Flow<List<StreamItem>> {
+        return db.youtubeVideoDao().observe()
+            .map { entity ->
+                entity.map {
+                    StreamItem.YoutubeItem(
+                        id = it.id,
+                        name = it.name,
+                        uri = it.url,
+                        downloaded = it.downloaded
                     )
                 }
             }.flowOn(Dispatchers.IO)
@@ -265,6 +293,39 @@ class StreamRepository(private val api: SoliApi, private val db: AppDatabase) {
                     played = played
                 )
             )
+        }
+    }
+
+    suspend fun addYoutubeVideo(name: String, url: String) {
+        withContext(Dispatchers.IO) {
+            db.youtubeVideoDao().upsert(
+                YoutubeVideoEntity(
+                    name = name,
+                    url = url,
+                    downloaded = false
+                )
+            )
+
+
+        }
+    }
+
+    suspend fun getYoutubeStreamItems(): List<StreamItem.YoutubeItem> {
+        return withContext(Dispatchers.IO) {
+            db.youtubeVideoDao().get().map {
+                StreamItem.YoutubeItem(
+                    id = it.id,
+                    name = it.name,
+                    uri = it.url,
+                    downloaded = it.downloaded
+                )
+            }
+        }
+    }
+
+    suspend fun markAsDownloaded(it: StreamItem.YoutubeItem) {
+        withContext(Dispatchers.IO) {
+            db.youtubeVideoDao().markAsDownloaded(it.id)
         }
     }
 }

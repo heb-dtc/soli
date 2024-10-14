@@ -59,7 +59,6 @@ kotlin {
             implementation(libs.vlc)
         }
         commonMain.dependencies {
-
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -91,6 +90,8 @@ kotlin {
 
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+
+            implementation(libs.okio)
         }
     }
 }

@@ -5,15 +5,23 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StreamLibrary(
-    val radios: List<Radio>,
-    val ambient: List<Ambient>,
-    val songs: List<Song>,
-    val podcasts: List<PodcastFeed>,
-    val spotifyPlaylists: List<SpotifyPlaylist>,
+    val radios: List<Radio> = emptyList(),
+    val ambient: List<Ambient> = emptyList(),
+    val songs: List<Song> = emptyList(),
+    val podcasts: List<PodcastFeed> = emptyList(),
+    val spotifyPlaylists: List<SpotifyPlaylist> = emptyList(),
+    val youtubeVideos: List<YoutubeVideo> = emptyList(),
 )
 
 @Serializable
 data class Radio(
+    val id: Long,
+    val name: String,
+    val url: String,
+)
+
+@Serializable
+data class YoutubeVideo(
     val id: Long,
     val name: String,
     val url: String,
@@ -65,6 +73,13 @@ sealed class StreamItem(open val id: Long, open val uri: String, open val name: 
         override val id: Long,
         override val uri: String,
         override val name: String,
+    ) : StreamItem(id, uri, name)
+
+    data class YoutubeItem(
+        override val id: Long,
+        override val uri: String,
+        override val name: String,
+        val downloaded: Boolean,
     ) : StreamItem(id, uri, name)
 
     data class AmbientItem(

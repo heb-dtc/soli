@@ -40,6 +40,7 @@ import net.heb.soli.player.MiniPlayer
 import net.heb.soli.player.ModalPlayer
 import net.heb.soli.player.Player
 import net.heb.soli.podcast.PodcastEpisodesScreen
+import net.heb.soli.youtube.YoutubeDownloadService
 import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 import org.koin.compose.module.rememberKoinModules
@@ -66,12 +67,11 @@ fun App() {
 }
 
 @OptIn(
-    ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
     ExperimentalMaterial3WindowSizeClassApi::class
 )
 @Composable
 fun Soli() {
-
     val player = koinInject<Player>()
 
     val sheetState = rememberModalBottomSheetState()

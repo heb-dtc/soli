@@ -13,6 +13,7 @@ import net.heb.soli.network.SoliApi
 import net.heb.soli.player.PlayerViewModel
 import net.heb.soli.podcast.PodcastEpisodesScreenViewModel
 import net.heb.soli.stream.StreamRepository
+import net.heb.soli.youtube.YoutubeDownloadService
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -59,4 +60,5 @@ fun commonModule() = module {
     singleOf(::SoliApi)
     singleOf(::getRoomDatabase)
     singleOf(::StreamRepository)
+    singleOf(::YoutubeDownloadService)
 }
