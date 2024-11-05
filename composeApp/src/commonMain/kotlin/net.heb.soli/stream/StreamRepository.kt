@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
+import net.heb.soli.Platform
 import net.heb.soli.db.AmbientEntity
 import net.heb.soli.db.AppDatabase
 import net.heb.soli.db.PlayedStatusUpdate
@@ -22,9 +23,9 @@ import net.heb.soli.network.SoliApi
 
 class StreamRepository(
     private val api: SoliApi,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val platform: Platform
 ) {
-
     suspend fun sync() {
         getStreams().forEach {
             when (it) {
@@ -172,8 +173,9 @@ class StreamRepository(
                     StreamItem.YoutubeItem(
                         id = it.id,
                         name = it.name,
-                        uri = it.url,
-                        downloaded = it.downloaded
+                        uri = "${platform.getAppDirectoryPath()}/youtube/${getLocalYoutubeFileName(it.url)}.mp3",
+                        downloaded = it.downloaded,
+                        youtubeUrl = it.url
                     )
                 }
             }.flowOn(Dispatchers.IO)
@@ -305,8 +307,6 @@ class StreamRepository(
                     downloaded = false
                 )
             )
-
-
         }
     }
 
@@ -316,8 +316,9 @@ class StreamRepository(
                 StreamItem.YoutubeItem(
                     id = it.id,
                     name = it.name,
-                    uri = it.url,
-                    downloaded = it.downloaded
+                    uri = "${platform.getAppDirectoryPath()}/youtube/${getLocalYoutubeFileName(it.url)}.mp3",
+                    downloaded = it.downloaded,
+                    youtubeUrl = it.url
                 )
             }
         }

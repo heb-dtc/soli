@@ -19,15 +19,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,77 +54,10 @@ fun HomeScreen(
     navigateToPodcastEpisodes: (id: Long) -> Unit
 ) {
     val state = viewModel.state.collectAsState()
-    val openAddYoutubeVideoDialog = remember { mutableStateOf(false) }
-
-    if (openAddYoutubeVideoDialog.value) {
-        var url by remember { mutableStateOf("") }
-        var name by remember { mutableStateOf("") }
-
-        Dialog(
-            onDismissRequest = {
-                openAddYoutubeVideoDialog.value = false
-            }) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-
-                    Text(
-                        "Add Youtube Video",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    OutlinedTextField(
-                        value = url,
-                        onValueChange = { url = it },
-                        label = { Text("video url") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.primary,
-                        )
-                    )
-
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("video name") }
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Button(
-                            onClick = {
-                                viewModel.addYoutubeVideo(name, url)
-                                openAddYoutubeVideoDialog.value = false
-                            }
-                        ) {
-                            Text(
-                                text = "Confirm",
-                                color = Color.White
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     HomeScreen(
         state = state.value,
         modifier = modifier,
-        addYoutubeVideo = {
-            openAddYoutubeVideoDialog.value = true
-        },
         onStartStream = viewModel::startStream,
         navigateToPodcastEpisodes = navigateToPodcastEpisodes
     )
@@ -131,7 +67,6 @@ fun HomeScreen(
 fun HomeScreen(
     state: HomeScreenState,
     modifier: Modifier = Modifier,
-    addYoutubeVideo: () -> Unit,
     onStartStream: (StreamItem) -> Unit,
     navigateToPodcastEpisodes: (id: Long) -> Unit,
 ) {
@@ -174,28 +109,10 @@ fun HomeScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.secondary
             )
-
-            OutlinedButton(
-                onClick = { addYoutubeVideo() },
-                shape = CircleShape,
-                modifier = Modifier.padding(start = 4.dp),
-                contentPadding = PaddingValues(0.dp),
-                border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = "Add",
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-            }
         }
         ItemGrid(
             items = state.streamItems.filterIsInstance<StreamItem.YoutubeItem>(),
-            onClick = {
-//                if ((it as StreamItem.YoutubeItem).downloaded) {
-//                    //onStartStream(it)
-//                }
-            },
+            onClick = onStartStream,
             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
         )
 

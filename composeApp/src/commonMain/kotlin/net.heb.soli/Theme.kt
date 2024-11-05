@@ -8,6 +8,13 @@ import androidx.compose.ui.graphics.Color
 
 val red = Color(0xFFef265b)
 val yellow = Color(0xFFecf589)
+val blue = Color(0xFF2274a5)
+val darkBlue = Color(0xFF0b132b)
+val lightGreen = Color(0xFF32936f)
+val charcoal = Color(0xFF424b54)
+val lightBlue = Color(0xFF92dce5)
+val indigo = Color(0xFF9792e3)
+
 val purple = Color(0xFF7522c8)
 val green = Color(0xFF82ee69)
 

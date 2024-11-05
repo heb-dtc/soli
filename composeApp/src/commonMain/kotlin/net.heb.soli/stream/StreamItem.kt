@@ -68,6 +68,10 @@ data class PodcastEpisode(
     val timeCode: Long
 )
 
+fun getLocalYoutubeFileName(youtubeUrl: String): String {
+    return youtubeUrl.substringAfterLast("=")
+}
+
 sealed class StreamItem(open val id: Long, open val uri: String, open val name: String) {
     data class RadioItem(
         override val id: Long,
@@ -80,6 +84,7 @@ sealed class StreamItem(open val id: Long, open val uri: String, open val name: 
         override val uri: String,
         override val name: String,
         val downloaded: Boolean,
+        val youtubeUrl: String
     ) : StreamItem(id, uri, name)
 
     data class AmbientItem(

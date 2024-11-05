@@ -3,6 +3,7 @@ package net.heb.soli.youtube
 import net.heb.soli.FILESYSTEM
 import net.heb.soli.Platform
 import net.heb.soli.stream.StreamRepository
+import net.heb.soli.stream.getLocalYoutubeFileName
 import okio.Path.Companion.toPath
 
 expect class YoutubeDownloader {
@@ -26,13 +27,14 @@ class YoutubeDownloadService(
             if (!it.downloaded) {
                 // check if the file has been downloaded already
                 val youtubeItemsPath = platform.getAppDirectoryPath().toPath().resolve("youtube")
-                if (FILESYSTEM.exists(youtubeItemsPath.resolve(it.name))) {
+                val fileName = getLocalYoutubeFileName(it.youtubeUrl)
+                if (FILESYSTEM.exists(youtubeItemsPath.resolve(fileName))) {
                     // TODO if file exists, mark it as downloaded?
                     streamRepository.markAsDownloaded(it)
                     return@forEach
                 } else {
                     // TODO handle error
-                    youtubeDownloader.download(it.uri, it.name)
+                    youtubeDownloader.download(it.youtubeUrl, fileName)
                     streamRepository.markAsDownloaded(it)
                 }
             }
